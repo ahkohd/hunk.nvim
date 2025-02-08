@@ -1,5 +1,4 @@
 local file_tree_api = require("hunk.api.file_tree")
-local signs = require("hunk.api.signs")
 local config = require("hunk.config")
 local utils = require("hunk.utils")
 
@@ -28,6 +27,16 @@ local function get_icon(path)
   end
 end
 
+local function get_change_color(change)
+  if change.type == "added" then
+    return "Green"
+  end
+  if change.type == "deleted" then
+    return "Red"
+  end
+  return "Blue"
+end
+
 local function file_tree_to_nodes(file_tree)
   return vim.tbl_map(function(node)
     local line = {}
@@ -43,13 +52,7 @@ local function file_tree_to_nodes(file_tree)
     if node.type == "dir" then
       highlight = "Green"
     elseif node.type == "file" then
-      if node.change.type == "added" then
-        highlight = "Green"
-      elseif node.change.type == "deleted" then
-        highlight = "Red"
-      else
-        highlight = "Blue"
-      end
+      highlight = get_change_color(node.change)
     else
       error("Unknown node type '" .. node.type .. "'")
     end
@@ -60,39 +63,12 @@ local function file_tree_to_nodes(file_tree)
     local ui_node = NuiTree.Node({
       line = line,
       change = node.change,
+      children = node.children,
       type = node.type,
     }, children)
     ui_node:expand()
     return ui_node
   end, file_tree)
-end
-
-local function apply_signs(tree, buf, nodes)
-  nodes = nodes or tree:get_nodes()
-  for _, node in pairs(nodes) do
-    if node.type == "file" then
-      local _, linenr = tree:get_node(node:get_id())
-      if linenr then
-        local sign
-        if node.change.selected then
-          sign = signs.signs.selected
-        elseif utils.any_lines_selected(node.change) then
-          sign = signs.signs.partially_selected
-        else
-          sign = signs.signs.deselected
-        end
-        signs.place_sign(buf, sign, linenr)
-      end
-    else
-      apply_signs(
-        tree,
-        buf,
-        vim.tbl_map(function(id)
-          return tree:get_node(id)
-        end, node:get_child_ids())
-      )
-    end
-  end
 end
 
 local function find_node_by_filepath(tree, path, nodes)
@@ -116,22 +92,71 @@ local function find_node_by_filepath(tree, path, nodes)
   end
 end
 
-local function get_changeset_recursive(tree, node, changeset)
+local function get_changeset_recursive(node, changeset)
   changeset = changeset or {}
 
-  local children = vim.tbl_map(function(id)
-    return tree:get_node(id)
-  end, node:get_child_ids())
-
-  for _, child in ipairs(children) do
+  for _, child in ipairs(node.children) do
     if child.type == "file" then
       table.insert(changeset, child.change)
     else
-      get_changeset_recursive(tree, child, changeset)
+      get_changeset_recursive(child, changeset)
     end
   end
 
   return changeset
+end
+
+local function get_dir_selection_state(node)
+  local all_selected = true
+  local at_least_one_selected = false
+
+  local changeset = get_changeset_recursive(node)
+
+  for _, change in ipairs(changeset) do
+    if not change.selected then
+      all_selected = false
+    end
+    if change.selected then
+      at_least_one_selected = true
+    elseif utils.any_lines_selected(change) then
+      at_least_one_selected = true
+    end
+  end
+
+  if all_selected then
+    return "all"
+  end
+
+  if at_least_one_selected then
+    return "partial"
+  end
+
+  return "none"
+end
+
+local function get_dir_icon(node)
+  local state = get_dir_selection_state(node)
+  if state == "all" then
+    return config.icons.selected
+  end
+
+  if state == "partial" then
+    return config.icons.partially_selected
+  end
+
+  return config.icons.deselected
+end
+
+local function get_file_icon(change)
+  if change.selected then
+    return config.icons.selected
+  end
+
+  if utils.any_lines_selected(change) then
+    return config.icons.partially_selected
+  end
+
+  return config.icons.deselected
 end
 
 local M = {}
@@ -155,6 +180,15 @@ function M.create(opts)
       else
         line:append("  ")
       end
+
+      local selection_icon
+      if node.type == "dir" then
+        selection_icon = get_dir_icon(node)
+      else
+        selection_icon = get_file_icon(node.change)
+      end
+
+      line:append(selection_icon .. " ", "Comment")
 
       if node.type == "dir" then
         local icon = config.icons.folder_closed
@@ -180,8 +214,6 @@ function M.create(opts)
 
   function Component.render()
     tree:render()
-    signs.clear_signs(buf)
-    apply_signs(tree, buf)
   end
 
   local callback_opts = { tree = Component }
@@ -189,7 +221,7 @@ function M.create(opts)
   for _, chord in ipairs(utils.into_table(config.keys.tree.open_file)) do
     vim.keymap.set("n", chord, function()
       local node = tree:get_node()
-      if node.type == "file" then
+      if node and node.type == "file" then
         opts.on_open(node.change, callback_opts)
       end
     end, { buffer = buf })
@@ -198,6 +230,9 @@ function M.create(opts)
   for _, chord in ipairs(utils.into_table(config.keys.tree.expand_node)) do
     vim.keymap.set("n", chord, function()
       local node = tree:get_node()
+      if not node then
+        return
+      end
       if node.type == "file" then
         opts.on_preview(node.change, callback_opts)
       end
@@ -211,7 +246,7 @@ function M.create(opts)
   for _, chord in ipairs(utils.into_table(config.keys.tree.collapse_node)) do
     vim.keymap.set("n", chord, function()
       local node = tree:get_node()
-      if node.type == "dir" and node:is_expanded() then
+      if node and node.type == "dir" and node:is_expanded() then
         node:collapse()
         Component.render()
       end

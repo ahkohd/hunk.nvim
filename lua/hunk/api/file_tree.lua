@@ -24,10 +24,11 @@ local function insert_path(tree, change)
     end
 
     if not found then
+      local type = is_last and "file" or "dir"
       local new_node = {
         name = part,
-        type = is_last and "file" or "dir",
-        change = change,
+        type = type,
+        change = type == "file" and change or {},
         children = {},
       }
       table.insert(node.children, new_node)
