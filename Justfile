@@ -33,9 +33,9 @@ prepare-nvim channel:
   test -d $NVIM_DIR || {
     mkdir -p $NVIM_DIR
 
-    curl -L https://github.com/neovim/neovim/releases/download/{{ channel }}/nvim-linux64.tar.gz > ./.build/nvim-linux64.tar.gz
-    tar xzf ./.build/nvim-linux64.tar.gz -C $NVIM_DIR --strip-components=1
-    rm ./.build/nvim-linux64.tar.gz
+    curl -L https://github.com/neovim/neovim/releases/download/{{ channel }}/nvim-linux-$(arch).tar.gz > ./.build/nvim-linux.tar.gz
+    tar xzf ./.build/nvim-linux.tar.gz -C $NVIM_DIR --strip-components=1
+    rm ./.build/nvim-linux.tar.gz
   }
 
 prepare-dependencies:
