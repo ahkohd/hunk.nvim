@@ -62,3 +62,17 @@ test channel="stable" file="": (prepare channel)
     --noplugin \
     -u tests/config.lua \
     -c "PlenaryBustedDirectory tests/hunk/{{ file }} { minimal_init='tests/config.lua', sequential=true }"
+
+run channel="stable": (prepare channel)
+  #!/usr/bin/env bash
+  set -eo pipefail
+
+  NVIM_DIR=".build/nvim/{{ channel }}"
+
+  rm -r $TMPDIR/hunk-nvim-run/ || true
+  cp -a dev/fixture $TMPDIR/hunk-nvim-run/
+
+  ./$NVIM_DIR/bin/nvim \
+    --noplugin \
+    -u tests/config.lua \
+    -c "DiffEditor $TMPDIR/hunk-nvim-run/left $TMPDIR/hunk-nvim-run/right $TMPDIR/hunk-nvim-run/out"
