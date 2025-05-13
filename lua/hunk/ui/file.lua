@@ -123,6 +123,33 @@ function M.create(window, params)
     end, { buffer = buf })
   end
 
+  for _, chord in ipairs(utils.into_table(config.keys.diff.prev_hunk)) do
+    vim.keymap.set("n", chord, function()
+      local cursor_pos = vim.api.nvim_win_get_cursor(0)
+      local line_num = cursor_pos[1]
+      for i, _ in ipairs(params.change.hunks) do
+        local hunk = params.change.hunks[#params.change.hunks - i + 1]
+        if hunk[params.side][1] < line_num then
+          vim.api.nvim_win_set_cursor(0, { hunk[params.side][1], cursor_pos[2] })
+          break
+        end
+      end
+    end, { buffer = buf })
+  end
+
+  for _, chord in ipairs(utils.into_table(config.keys.diff.next_hunk)) do
+    vim.keymap.set("n", chord, function()
+      local cursor_pos = vim.api.nvim_win_get_cursor(0)
+      local line_num = cursor_pos[1]
+      for _, hunk in ipairs(params.change.hunks) do
+        if hunk[params.side][1] > line_num then
+          vim.api.nvim_win_set_cursor(0, { hunk[params.side][1], cursor_pos[2] })
+          break
+        end
+      end
+    end, { buffer = buf })
+  end
+
   config.hooks.on_diff_mount({ buf = buf, win = window })
 
   local function apply_signs()

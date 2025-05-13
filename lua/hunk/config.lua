@@ -18,6 +18,9 @@ local M = {
     diff = {
       toggle_line = { "a" },
       toggle_hunk = { "A" },
+
+      prev_hunk = { "[h" },
+      next_hunk = { "]h" },
     },
   },
 
