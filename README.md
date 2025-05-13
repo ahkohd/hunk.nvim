@@ -103,6 +103,10 @@ hunk.setup({
 })
 ```
 
+> [!NOTE]
+>
+> You can always press `g?` to get a help menu of the available commands
+
 ### Highlights
 
 Most of the hunk colors can be configured by defining your own highlight overrides. Refer to the below table for a list

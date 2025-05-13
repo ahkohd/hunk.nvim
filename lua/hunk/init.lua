@@ -76,6 +76,12 @@ local function toggle_hunk(change, side, line)
 end
 
 local function set_global_bindings(layout, buf)
+  vim.keymap.set("n", "g?", function()
+    ui.help.create()
+  end, {
+    buffer = buf,
+  })
+
   for _, chord in ipairs(utils.into_table(config.keys.global.accept)) do
     vim.keymap.set("n", chord, function()
       api.changeset.write_changeset(CONTEXT.changeset, CONTEXT.output or CONTEXT.right)
