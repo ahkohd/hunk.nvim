@@ -30,6 +30,7 @@ local function create_buffer(params)
     modifiable = false,
     modified = false,
     readonly = true,
+    swapfile = false,
   }
 
   if params.side == "left" then
