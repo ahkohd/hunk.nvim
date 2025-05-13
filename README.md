@@ -40,9 +40,9 @@ the `right` directory if no output is provided) to match your selection.
 
 ### Dependencies
 
-+ [nui.nvim](https://github.com/MunifTanjim/nui.nvim)
-+ [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) (optional)
-+ [mini.icons](https://github.com/echasnovski/mini.icons) (optional)
+- [nui.nvim](https://github.com/MunifTanjim/nui.nvim)
+- [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) (optional)
+- [mini.icons](https://github.com/echasnovski/mini.icons) (optional)
 
 If you want file type icons in the file tree then you should have one of either `mini.icons` or `nvim-web-devicons`
 installed. Otherwise, neither are required.
@@ -71,7 +71,7 @@ hunk.setup({
     diff = {
       toggle_line = { "a" },
       toggle_hunk = { "A" },
- 
+
       prev_hunk = { "[h" },
       next_hunk = { "]h" },
 
@@ -131,14 +131,13 @@ of available highlights:
 
 ### Using Hooks
 
-Hooks can be used to bind keys with "complex" logic, or to set buffer/window local options on the
-three or diff splits.
+Hooks can be used to bind keys with "complex" logic, or to set buffer/window local options on the tree or diff splits.
 
 <details>
   <summary>Skipping Folders in the File Tree</summary>
 
-These bindings allow `j`/`k` to skip over folders in the file tree (b/c they're generally not
-relevant). You can still access folders with `gj`/`gk`.
+These bindings allow `j`/`k` to skip over folders in the file tree (b/c they're generally not relevant). You can still
+access folders with `gj`/`gk`.
 
 ```lua
 -- track all the lines of leaf nodes so we don't have to recompute them on each key press
@@ -196,6 +195,7 @@ require("hunk").setup({
   },
 })
 ```
+
 </details>
 
 <details>
@@ -207,9 +207,10 @@ require("hunk").setup({
     on_tree_mount = function(context)
       vim.api.nvim_set_option_value("spell", false, { win = context.win })
     end,
-  }
+  },
 })
 ```
+
 </details>
 
 ## Using with Jujutsu
@@ -225,4 +226,5 @@ their `ui.diff-editor` config option. To use `hunk.nvim` add the following to yo
 diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]
 ```
 
-You can find more info on this config in [the jujutsu docs](https://martinvonz.github.io/jj/latest/config/#editing-diffs).
+You can find more info on this config in
+[the jujutsu docs](https://martinvonz.github.io/jj/latest/config/#editing-diffs).
