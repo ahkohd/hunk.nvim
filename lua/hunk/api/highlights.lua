@@ -38,38 +38,25 @@ function M.define_highlights()
     link = "Comment",
   })
 
-  vim.api.nvim_set_hl(0, "HunkFileTreeFileAdded", {
+  vim.api.nvim_set_hl(0, "HunkTreeFileAdded", {
     default = true,
     link = "Green",
   })
-  vim.api.nvim_set_hl(0, "HunkFileTreeFileDeleted", {
+  vim.api.nvim_set_hl(0, "HunkTreeFileDeleted", {
     default = true,
     link = "Red",
   })
-  vim.api.nvim_set_hl(0, "HunkFileTreeFileModified", {
+  vim.api.nvim_set_hl(0, "HunkTreeFileModified", {
     default = true,
     link = "Blue",
   })
 
-  vim.api.nvim_set_hl(0, "HunkFileTreeIconAdded", {
-    default = true,
-    link = "HunkFileTreeFileAdded",
-  })
-  vim.api.nvim_set_hl(0, "HunkFileTreeIconDeleted", {
-    default = true,
-    link = "HunkFileTreeFileDeleted",
-  })
-  vim.api.nvim_set_hl(0, "HunkFileTreeIconModified", {
-    default = true,
-    link = "HunkFileTreeFileModified",
-  })
-
-  vim.api.nvim_set_hl(0, "HunkFileTreeDirIcon", {
+  vim.api.nvim_set_hl(0, "HunkTreeDirIcon", {
     default = true,
     link = "Yellow",
   })
 
-  vim.api.nvim_set_hl(0, "HunkFileTreeSelectionIcon", {
+  vim.api.nvim_set_hl(0, "HunkTreeSelectionIcon", {
     default = true,
     link = "Comment",
   })

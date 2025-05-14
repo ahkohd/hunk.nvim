@@ -118,16 +118,13 @@ hunk.setup({
 Most of the hunk colors can be configured by defining your own highlight overrides. Refer to the below table for a list
 of available highlights:
 
-| Highlight                   | Default                    |
-| --------------------------- | -------------------------- |
-| `HunkFileTreeFileAdded`     | `Green`                    |
-| `HunkFileTreeFileDeleted`   | `Red`                      |
-| `HunkFileTreeFileModified`  | `Blue`                     |
-| `HunkFileTreeIconAdded`     | `HunkFileTreeFileAdded`    |
-| `HunkFileTreeIconDeleted`   | `HunkFileTreeFileDeleted`  |
-| `HunkFileTreeIconModified`  | `HunkFileTreeFileModified` |
-| `HunkFileTreeDirIcon`       | `Yellow`                   |
-| `HunkFileTreeSelectionIcon` | `Comment`                  |
+| Highlight               | Default   |
+| ----------------------- | --------- |
+| `HunkTreeFileAdded`     | `Green`   |
+| `HunkTreeFileDeleted`   | `Red`     |
+| `HunkTreeFileModified`  | `Blue`    |
+| `HunkTreeDirIcon`       | `Yellow`  |
+| `HunkTreeSelectionIcon` | `Comment` |
 
 ### Using Hooks
 

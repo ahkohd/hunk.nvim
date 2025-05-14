@@ -52,7 +52,7 @@ local function file_tree_to_nodes(file_tree)
     if node.type == "dir" then
       highlight = "Green"
     elseif node.type == "file" then
-      highlight = get_change_color("HunkFileTreeFile", node.change)
+      highlight = get_change_color("HunkTreeFile", node.change)
     else
       error("Unknown node type '" .. node.type .. "'")
     end
@@ -189,14 +189,14 @@ function M.create(opts)
         selection_icon = get_file_icon(node.change)
       end
 
-      line:append(selection_icon .. " ", "HunkFileTreeSelectionIcon")
+      line:append(selection_icon .. " ", "HunkTreeSelectionIcon")
 
       if node.type == "dir" then
         local icon = config.icons.folder_closed
         if node:is_expanded() then
           icon = config.icons.folder_open
         end
-        line:append(icon .. " ", "HunkFileTreeDirIcon")
+        line:append(icon .. " ", "HunkTreeDirIcon")
       end
 
       for _, text in ipairs(node.line) do
