@@ -69,8 +69,11 @@ hunk.setup({
     },
 
     diff = {
-      toggle_line = { "a" },
       toggle_hunk = { "A" },
+      toggle_line = { "a" },
+      -- This is like toggle_line but it will also toggle the line on the other
+      -- 'side' of the diff.
+      toggle_line_pair = { "s" },
 
       prev_hunk = { "[h" },
       next_hunk = { "]h" },

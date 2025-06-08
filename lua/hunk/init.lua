@@ -44,17 +44,50 @@ local function toggle_lines(change, side, lines, value)
   end
 end
 
-local function toggle_hunk(change, side, line)
-  local hunk
-  for _, current_hunk in ipairs(change.hunks) do
-    local start_line = current_hunk[side][1]
-    local end_line = start_line + current_hunk[side][2]
-    if line <= end_line and line >= start_line then
-      hunk = current_hunk
-      break
+local function line_is_within_hunk_bounds(hunk, side, line)
+  local start_line = hunk[side][1]
+  local end_line = start_line + hunk[side][2]
+  return line <= end_line and line >= start_line
+end
+
+local function find_hunk_at_line(hunks, side, line)
+  for _, current_hunk in ipairs(hunks) do
+    if line_is_within_hunk_bounds(current_hunk, side, line) then
+      return current_hunk
     end
   end
+end
 
+local function toggle_line_pairs(change, reference_side, lines, value)
+  local hunk
+  for _, line in ipairs(lines) do
+    if not hunk or not line_is_within_hunk_bounds(hunk, reference_side, line) then
+      hunk = find_hunk_at_line(change.hunks, reference_side, line)
+    end
+
+    if value ~= nil then
+      value = change.selected_lines[reference_side][line]
+    end
+
+    if hunk then
+      toggle_lines(change, reference_side, { line }, value)
+
+      local opposite_side = "left"
+      if reference_side == "left" then
+        opposite_side = "right"
+      end
+
+      local offset = (hunk[reference_side][1] - line) * -1
+      if hunk[opposite_side][2] >= offset then
+        local other_line = hunk[opposite_side][1] + offset
+        toggle_lines(change, opposite_side, { other_line }, value)
+      end
+    end
+  end
+end
+
+local function toggle_hunk(change, side, line)
+  local hunk = find_hunk_at_line(change.hunks, side, line)
   if not hunk then
     return
   end
@@ -114,8 +147,14 @@ local function open_file(layout, tree, change)
 
   local function on_file_event(event)
     if event.type == "toggle-lines" then
-      toggle_lines(change, event.file.side, event.lines)
-      event.file.render()
+      if event.both_sides then
+        toggle_line_pairs(change, event.file.side, event.lines)
+        left_file.render()
+        right_file.render()
+      else
+        toggle_lines(change, event.file.side, event.lines)
+        event.file.render()
+      end
       tree.render()
       return
     end
