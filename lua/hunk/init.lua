@@ -113,6 +113,7 @@ local function set_global_bindings(layout, buf)
     ui.help.create()
   end, {
     buffer = buf,
+    desc = "Open hunk.nvim help",
   })
 
   for _, chord in ipairs(utils.into_table(config.keys.global.accept)) do
@@ -121,6 +122,7 @@ local function set_global_bindings(layout, buf)
       vim.cmd("qa")
     end, {
       buffer = buf,
+      desc = "Accept the current selection",
     })
   end
 
@@ -129,6 +131,7 @@ local function set_global_bindings(layout, buf)
       vim.cmd("cq")
     end, {
       buffer = buf,
+      desc = "Cancel selection and quit",
     })
   end
 
@@ -137,6 +140,7 @@ local function set_global_bindings(layout, buf)
       vim.api.nvim_set_current_win(layout.tree)
     end, {
       buffer = buf,
+      desc = "Focus hunk.nvim file-tree",
     })
   end
 end

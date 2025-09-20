@@ -96,10 +96,13 @@ function M.create(window, params)
     change = params.change,
   }
 
-  local map_opts = {
-    buffer = buf,
-    nowait = true,
-  }
+  local function map_opts(desc)
+    return {
+      buffer = buf,
+      nowait = true,
+      desc = desc,
+    }
+  end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_line)) do
     vim.keymap.set("n", chord, function()
@@ -109,7 +112,7 @@ function M.create(window, params)
         lines = { line },
         file = File,
       })
-    end, map_opts)
+    end, map_opts("Toggle line under cursor"))
 
     vim.keymap.set("v", chord, function()
       local lines = get_selected_lines()
@@ -120,7 +123,7 @@ function M.create(window, params)
           file = File,
         })
       end)
-    end, map_opts)
+    end, map_opts("Toggle selected line(s)"))
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_line_pair)) do
@@ -132,7 +135,7 @@ function M.create(window, params)
         file = File,
         both_sides = true,
       })
-    end, map_opts)
+    end, map_opts("Toggle line pair under cursor (left + right)"))
 
     vim.keymap.set("v", chord, function()
       local lines = get_selected_lines()
@@ -144,7 +147,7 @@ function M.create(window, params)
           both_sides = true,
         })
       end)
-    end, map_opts)
+    end, map_opts("Toggle selected line pair(s) (left + right)"))
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_hunk)) do
@@ -154,7 +157,7 @@ function M.create(window, params)
         line = vim.api.nvim_win_get_cursor(window)[1],
         file = File,
       })
-    end, map_opts)
+    end, map_opts("Toggle entire hunk under cursor"))
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.prev_hunk)) do
@@ -168,7 +171,7 @@ function M.create(window, params)
           break
         end
       end
-    end, map_opts)
+    end, map_opts("Go to prev hunk"))
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.next_hunk)) do
@@ -181,7 +184,7 @@ function M.create(window, params)
           break
         end
       end
-    end, map_opts)
+    end, map_opts("Go to next hunk"))
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_focus)) do
@@ -190,7 +193,7 @@ function M.create(window, params)
         type = "toggle-focus",
         side = params.side,
       })
-    end, map_opts)
+    end, map_opts("Toggle focused window between left/right"))
   end
 
   config.hooks.on_diff_mount({ buf = buf, win = window })

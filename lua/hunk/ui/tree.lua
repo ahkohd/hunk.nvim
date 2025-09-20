@@ -225,7 +225,10 @@ function M.create(opts)
       if node and node.type == "file" then
         opts.on_open(node.change, callback_opts)
       end
-    end, { buffer = buf })
+    end, {
+      buffer = buf,
+      desc = "Open file under cursor",
+    })
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.tree.expand_node)) do
@@ -241,7 +244,10 @@ function M.create(opts)
         node:expand()
         Component.render()
       end
-    end, { buffer = buf })
+    end, {
+      buffer = buf,
+      desc = "Expand or preview node under cursor",
+    })
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.tree.collapse_node)) do
@@ -251,7 +257,10 @@ function M.create(opts)
         node:collapse()
         Component.render()
       end
-    end, { buffer = buf })
+    end, {
+      buffer = buf,
+      desc = "Collapse node under cursor",
+    })
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.tree.toggle_file)) do
@@ -267,7 +276,10 @@ function M.create(opts)
       for _, change in ipairs(changeset) do
         opts.on_toggle(change, state ~= "all", callback_opts)
       end
-    end, { buffer = buf })
+    end, {
+      buffer = buf,
+      desc = "Toggle all hunks in file under cursor",
+    })
   end
 
   config.hooks.on_tree_mount({ buf = buf, tree = tree, opts = opts })
