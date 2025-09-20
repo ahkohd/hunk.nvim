@@ -116,6 +116,16 @@ hunk.setup({
 >
 > You can always press `g?` to get a help menu of the available commands
 
+### Accepting / Rejecting Changes
+
+Once you are happy with your selected set of hunks and/or lines you can accept the change by using the
+`key.global.accept` keybinding. See **[configuration](#configuration)** or press `g?` to see what this is bound to
+(default `<leader><Cr>`).
+
+If Neovim exits with a non-0 exit code then the selection will be aborted and no changes will be written. You can use
+the `keys.global.quit` keybinding (default `q`) to exit with a non-0 exit code. This just calls `:cq` internally - so
+you can do that too.
+
 ### Highlights
 
 Most of the hunk colors can be configured by defining your own highlight overrides. Refer to the below table for a list
